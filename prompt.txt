@@ -1,0 +1,10 @@
+I have developed a URL shortener application which is in progress to become a production quality application. So far I have developed the 
+
+- The APIs (GET and POST)
+- Used postgreSQL db to store data and redis for caching
+- Added rate limiting middleware for my API routes 
+- Added validations and security mechanisms like helmet.js, cors, parameterized query, https for development server when it runs individually
+
+(Add more steps as you progress)
+
+Now I would like to ...

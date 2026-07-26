@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>URL Shortener</title>
+    <style>
+      body {
+        font-family:
+          system-ui,
+          -apple-system,
+          sans-serif;
+        max-width: 500px;
+        margin: 50px auto;
+        padding: 20px;
+        background: #f9f9f9;
+      }
+      .card {
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      h2 {
+        margin-top: 0;
+        color: #333;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+      input[type="url"] {
+        width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      button {
+        background: #0070f3;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 4px;
+        cursor: pointer;
+        width: 100%;
+        font-size: 16px;
+      }
+      button:hover {
+        background: #0051cb;
+      }
+      .result {
+        margin-top: 20px;
+        padding: 15px;
+        background: #e1f5fe;
+        border-radius: 4px;
+        display: none;
+        word-break: break-all;
+      }
+      .error {
+        margin-top: 20px;
+        padding: 15px;
+        background: #ffebee;
+        color: #c62828;
+        border-radius: 4px;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h2>URL Shortener</h2>
+
+      <form id="shortenForm">
+        <div class="form-group">
+          <label for="longUrl">Enter your long URL:</label>
+          <input
+            type="url"
+            id="longUrl"
+            placeholder="https://example.com"
+            required
+          />
+        </div>
+        <button type="submit">Shorten URL</button>
+      </form>
+
+      <div id="resultBox" class="result">
+        <strong>Shortened Link:</strong><br />
+        <a id="shortLink" href="#" target="_blank"></a>
+      </div>
+
+      <div id="errorBox" class="error"></div>
+    </div>
+
+    <script>
+      document
+        .getElementById("shortenForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const longUrlInput = document.getElementById("longUrl").value;
+          const resultBox = document.getElementById("resultBox");
+          const errorBox = document.getElementById("errorBox");
+          const shortLink = document.getElementById("shortLink");
+
+          // Reset UI visibility states
+          resultBox.style.display = "none";
+          errorBox.style.display = "none";
+
+          try {
+            // 1. Make the POST request to your API schema
+            const response = await fetch("/api/v1/shorten", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ longUrl: longUrlInput }),
+            });
+
+            const responseData = await response.json();
+
+            if (!response.ok) {
+              throw new Error(responseData.message || "Failed to shorten URL");
+            }
+
+            console.log(responseData);
+
+            // 2. Extract the shortCode returned by your Express backend
+            // Expected JSON format from your API: { shortCode: "xyz123" }
+            const shortCode = responseData?.data?.shortCode;
+
+            // Construct the GET endpoint path format (localhost:3001/:shortCode)
+            const absoluteShortUrl = `${window.location.origin}/${shortCode}`;
+
+            // 3. Render the output URL safely to the browser window
+            shortLink.href = absoluteShortUrl;
+            shortLink.textContent = absoluteShortUrl;
+            resultBox.style.display = "block";
+          } catch (err) {
+            errorBox.textContent = `Error: ${err.message}`;
+            errorBox.style.display = "block";
+          }
+        });
+    </script>
+  </body>
+</html>

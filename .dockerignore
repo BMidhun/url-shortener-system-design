@@ -1,0 +1,6 @@
+./certs
+./dbscripts
+.env.*
+prompt.txt
+start.*.sh
+./node_modules
