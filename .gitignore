@@ -1,3 +1,5 @@
 .env*
 **/node_modules
 certs
+prompt.txt
+/load_test/sample_data.json

@@ -4,7 +4,7 @@ services:
     image: redis:alpine
     container_name: redis-cache
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT:-6379}:6379"
     networks:
       - app-network
 
@@ -13,15 +13,18 @@ services:
     build: .
     command: npm run start
     environment:
-      - PORT=3001
-      - NODE_ENV=production
-      - DB_USER=postgres
+      - PORT=${PORT}
+      - NODE_ENV=${NODE_ENV}
+      - DB_USER=${DB_USER}
       - DB_HOST=host.docker.internal
-      - DB_NAME=urlShortDB
-      - DB_PASSWORD=password
-      - DB_PORT=5432
-      - REDIS_PORT=6379
+      - DB_NAME=${DB_NAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_PORT=${DB_PORT}
+      - REDIS_PORT=${REDIS_PORT}
       - REDIS_HOST=redis
+      - MAX_DB_POOL_CONNECTIONS=${MAX_DB_POOL_CONNECTIONS}
+      - IDLE_DB_TIMEOUT=${IDLE_DB_TIMEOUT}
+      - DB_CONNECTION_TIMEOUT=${DB_CONNECTION_TIMEOUT}
     depends_on:
       - redis
     networks:
@@ -41,7 +44,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - ./certs/localhost+2-key.pem:/etc/nginx/certs/localhost-key.pem:ro
       - ./certs/localhost+2.pem:/etc/nginx/certs/localhost.pem:ro
     depends_on:

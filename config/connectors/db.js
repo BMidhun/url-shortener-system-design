@@ -1,14 +1,25 @@
 const { Pool } = require("pg");
 
+const MAX_DB_POOL_CONNECTIONS = Number(process.env.MAX_DB_POOL_CONNECTIONS);
+const IDLE_DB_TIMEOUT = Number(process.env.IDLE_DB_TIMEOUT);
+const DB_CONNECTION_TIMEOUT = Number(process.env.DB_CONNECTION_TIMEOUT);
+
+console.log(
+  `DB Connection Pool Settings:`,
+  MAX_DB_POOL_CONNECTIONS,
+  IDLE_DB_TIMEOUT,
+  DB_CONNECTION_TIMEOUT,
+);
+
 const pool = new Pool({
   user: process.env.DB_USER,
   host: process.env.DB_HOST,
   database: process.env.DB_NAME,
   password: process.env.DB_PASSWORD,
   port: process.env.DB_PORT,
-  max: 5, // Maximum number of connections allowed in the pool per node instance
-  idleTimeoutMillis: 30000, // Close idle connections after 30 seconds
-  connectionTimeoutMillis: 2000, // Return an error if a connection takes > 2s
+  max: MAX_DB_POOL_CONNECTIONS || 5, // Maximum number of connections allowed in the pool per node instance
+  idleTimeoutMillis: IDLE_DB_TIMEOUT || 30000, // Close idle connections after 30 seconds
+  connectionTimeoutMillis: DB_CONNECTION_TIMEOUT || 2000, // Return an error if a connection takes > 2s
 });
 
 function getDbPool() {

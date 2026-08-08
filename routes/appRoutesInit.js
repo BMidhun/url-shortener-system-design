@@ -1,5 +1,6 @@
 const { rateLimiter } = require("../config/rate-limit.js");
-const { rootDir } = require("../utils/rootDir.js");
+
+const isLoadTestEnv = process.env === "loadtest";
 
 function intializeRoutes(app) {
   app.get("/favicon.ico", (req, res) => res.status(204).end());
@@ -10,11 +11,15 @@ function intializeRoutes(app) {
 
   app.get(
     "/:shortCode",
-    rateLimiter({
-      windowMs: 1 * 60 * 1000,
-      max: 100,
-      message: "Too many requests. Slow down.",
-    }),
+    ...(isLoadTestEnv
+      ? [
+          rateLimiter({
+            windowMs: 1 * 60 * 1000,
+            max: 100,
+            message: "Too many requests. Slow down.",
+          }),
+        ]
+      : []),
     (req, res) => {
       const shortCode = req.params.shortCode;
       const newPath = `/api/v1/shortUrls/${shortCode}`;

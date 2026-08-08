@@ -1,7 +1,7 @@
 # DOCKER COMPOSE Commands to run
 
-`docker-compose up --scale express-app=5 --build`
+`docker compose --env-file .env.development up --build`
 
 Scale express app dynamically with
 
-`docker-compose up --scale express-app=5 --build`
+`docker compose --env-file .env.development up --build --scale express-app=5`
