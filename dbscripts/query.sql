@@ -12,3 +12,16 @@ SELECT * FROM "shortURLTableSchema"."shortURLTable"
 ORDER BY id ASC;
 
 TRUNCATE TABLE "shortURLTableSchema"."shortURLTable" RESTART IDENTITY CASCADE;
+
+ALTER TABLE "shortURLTableSchema"."shortURLTable" 
+ADD CONSTRAINT unique_long_url UNIQUE (long_url);
+
+
+-- Generate data in json format
+
+SELECT json_agg(
+    json_build_object(
+        'short_code', short_code
+    )
+) AS json_output
+FROM "shortURLTableSchema"."shortURLTable";
